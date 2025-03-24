@@ -11,7 +11,7 @@ END_DATE = datetime(2025, 12, 14)
 AVATAR1_PATH = "Avatar1.png"
 AVATAR2_PATH = "Avatar2.png"
 
-ImageFile.LOAD_TRUNCATED_IMAGES = True
+Image.LOAD_TRUNCATED_IMAGES = True
 
 sl.set_page_config(layout="wide")
 # Initialize session state
