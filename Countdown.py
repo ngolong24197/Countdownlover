@@ -5,15 +5,37 @@ import time
 from PIL import Image
 from dateutil.relativedelta import relativedelta
 
+# Set wide layout to reduce blank space on sides
+sl.set_page_config(layout="wide")
+
 # Define constants
 START_DATE = datetime(2024, 12, 14)
 END_DATE = datetime(2025, 12, 14)
 AVATAR1_PATH = "Avatar1.png"
 AVATAR2_PATH = "Avatar2.png"
 
-Image.LOAD_TRUNCATED_IMAGES = True
+# CSS Styling for Custom Font
+sl.markdown(
+    """
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap'); /* Replace 'Pacifico' with your desired font */
 
-sl.set_page_config(layout="wide")
+    body {
+        font-family: 'Pacifico', cursive; /* Apply globally */
+    }
+
+    .center-text {
+        text-align: center;
+        font-size: 55px;
+        line-height: 1.6;
+   
+        font-family: 'Pacifico', cursive; /* Apply custom font */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 # Initialize session state
 if 'remaining' not in sl.session_state:
     sl.session_state.remaining = relativedelta(END_DATE, START_DATE)
@@ -29,10 +51,8 @@ if os.path.exists(AVATAR1_PATH):
 if os.path.exists(AVATAR2_PATH):
     right_avatar = Image.open(AVATAR2_PATH)
 
-# Layout for avatars and progress
+# Layout for avatars and progress bar with centered images
 avatar_col, progress_col, avatar_col2 = sl.columns([1, 5, 1])
-
-
 
 with avatar_col:
     if left_avatar:
@@ -47,7 +67,7 @@ with avatar_col:
 
 with avatar_col2:
     if right_avatar:
-        sl.image(right_avatar, width=200 , caption="Avatar 2")
+        sl.image(right_avatar, width=200, caption="Avatar 2")
     else:
         sl.text("Avatar 2")
         right_upload = sl.file_uploader("Upload Avatar 2", type=["png", "jpg"], key="right_upload")
@@ -79,37 +99,34 @@ elif selected_avatar == "Avatar 2" and right_avatar:
         sl.success("Avatar 2 replaced successfully!")
         sl.rerun()
 
-# Progress bar and time display
+# Progress bar and time display in the center column
 with progress_col:
-    time_display = sl.empty()
-    progress_bar = sl.progress(0)
-    percentage_display = sl.empty()
+    current_time = datetime.now()
+    time_diff = END_DATE - current_time
+    elapsed_seconds = (current_time - START_DATE).total_seconds()
 
-current_time = datetime.now()
-time_diff = END_DATE - current_time
-elapsed_seconds = (current_time - START_DATE).total_seconds()
+    if current_time < END_DATE:
+        progress = min((elapsed_seconds / sl.session_state.total_seconds) * 100, 100)
+        rd = relativedelta(END_DATE, current_time)
 
-if current_time < END_DATE:
-    progress = min((elapsed_seconds / sl.session_state.total_seconds) * 100, 100)
-    rd = relativedelta(END_DATE, current_time)
+        time_text = f"""
+        <div class="center-text">
+            <p><b>Months Remaining:</b> {rd.months + (rd.years * 12)}</p>
+            <p><b>Days:</b> {rd.days}</p>
+            <p><b>Hours:</b> {rd.hours}</p>
+            <p><b>Minutes:</b> {rd.minutes}</p>
+            <p><b>Seconds:</b> {rd.seconds}</p>
+        </div>
+        """
+        percentage_text = f"<div class='center-text'><b>Finish your journey: {int(progress)}%</b></div>"
+    else:
+        progress = 100
+        time_text = '<div class="center-text"><h3>Countdown Complete!</h3></div>'
 
-    time_text = f"""
-    **Months Remaining:** {rd.months + (rd.years * 12)}\n
-    **Days:** {rd.days}\n
-    **Hours:** {rd.hours}\n
-    **Minutes:** {rd.minutes}\n
-    **Seconds:** {rd.seconds}
-    """
-    percentage_text = f"Finish your journey: {int(progress)}%"
-
-else:
-    progress = 100
-    time_text = "Countdown Complete!"
-
-time_display.markdown(time_text)
-progress_bar.progress(int(progress))
-percentage_display.markdown(f"**{percentage_text}**")
-
+    # Display countdown and progress bar
+    sl.markdown(time_text, unsafe_allow_html=True)
+    progress_bar = sl.progress(int(progress))
+    sl.markdown(percentage_text, unsafe_allow_html=True)
 
 time.sleep(0.5)
 sl.rerun()
