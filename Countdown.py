@@ -14,23 +14,38 @@ END_DATE = datetime(2025, 12, 14)
 AVATAR1_PATH = "Avatar1.png"
 AVATAR2_PATH = "Avatar2.png"
 
-# CSS Styling for Custom Font
+# CSS Styling for Background Image, Custom Font, and Enhanced Progress Bar
 sl.markdown(
     """
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap'); /* Replace 'Pacifico' with your desired font */
+    @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
 
-    body {
-        font-family: 'Pacifico', cursive; /* Apply globally */
+    /* Set background image */
+    [data-testid="stAppViewContainer"] {
+        background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxE9USFkNZZq3jgQV4XvDDLHV9StOFCuQoph2BNQTnOI9l0rNYcogjBbM2HXUFTeC7Bks&usqp=CAU");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
     }
 
+    /* Style the text */
     .center-text {
         text-align: center;
         font-size: 55px;
         line-height: 1.6;
-   
-        font-family: 'Pacifico', cursive; /* Apply custom font */
+        font-family: 'Pacifico', cursive;
+    
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     }
+
+    
+    # /* Style the progress bar */
+    # .stProgress > div > div {
+    #     height: 40px !important;
+    # }
+    # .stProgress > div > div > div {
+    #     background-color: #FF69B4 !important;
+    # }
     </style>
     """,
     unsafe_allow_html=True,
