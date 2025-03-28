@@ -1,5 +1,5 @@
 import streamlit as sl
-from datetime import datetime as datetime
+from datetime import datetime
 import os
 import time
 from PIL import Image
@@ -34,18 +34,45 @@ sl.markdown(
         font-size: 55px;
         line-height: 1.6;
         font-family: 'Pacifico', cursive;
-    
+        color: white;
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     }
 
+    /* Style the radio button options */
+    .stRadio > div {
+        color: white !important;
+    }
+    .stRadio > div > label {
+        color: white !important;
+        font-size: 20px;
+        font-weight: bold;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+    .stRadio [role="radiogroup"] label {
+        color: white !important;
+        font-size: 18px;
+        font-weight: normal;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Style the selected radio option */
+    .stRadio [data-baseweb="radio"] input:checked + div {
+        background-color: rgba(255, 255, 255, 0.3) !important;
+        border-radius: 10px;
+        padding: 5px;
+    }
+
+    /* Ensure all text colors remain white for visibility */
+    .stRadio label {
+        color: white !important;
+    }
     
-    # /* Style the progress bar */
-    # .stProgress > div > div {
-    #     height: 40px !important;
-    # }
-    # .stProgress > div > div > div {
-    #     background-color: #FF69B4 !important;
-    # }
+    /* Style for heart icon */
+    .heart-icon {
+        font-size: 40px;
+        color: red;
+        margin: 0 20px;
+    }
     </style>
     """,
     unsafe_allow_html=True,
@@ -71,7 +98,7 @@ avatar_col, progress_col, avatar_col2 = sl.columns([1, 5, 1])
 
 with avatar_col:
     if left_avatar:
-        sl.image(left_avatar, width=200, caption="Avatar 1")
+        sl.image(left_avatar, width=150, caption="Avatar 1")
     else:
         sl.text("Avatar 1")
         left_upload = sl.file_uploader("Upload Avatar 1", type=["png", "jpg"], key="left_upload")
@@ -82,7 +109,7 @@ with avatar_col:
 
 with avatar_col2:
     if right_avatar:
-        sl.image(right_avatar, width=200, caption="Avatar 2")
+        sl.image(right_avatar, width=150, caption="Avatar 2")
     else:
         sl.text("Avatar 2")
         right_upload = sl.file_uploader("Upload Avatar 2", type=["png", "jpg"], key="right_upload")
@@ -126,11 +153,8 @@ with progress_col:
 
         time_text = f"""
         <div class="center-text">
-            <p><b>Months Remaining:</b> {rd.months + (rd.years * 12)}</p>
-            <p><b>Days:</b> {rd.days}</p>
-            <p><b>Hours:</b> {rd.hours}</p>
-            <p><b>Minutes:</b> {rd.minutes}</p>
-            <p><b>Seconds:</b> {rd.seconds}</p>
+            <p><b>Together for:</b> {rd.months + (rd.years * 12)} months, {rd.days} days</p>
+            <p><b>Time Remaining:</b> {rd.hours} hours, {rd.minutes} minutes, {rd.seconds} seconds</p>
         </div>
         """
         percentage_text = f"<div class='center-text'><b>Finish your journey: {int(progress)}%</b></div>"
@@ -142,6 +166,11 @@ with progress_col:
     sl.markdown(time_text, unsafe_allow_html=True)
     progress_bar = sl.progress(int(progress))
     sl.markdown(percentage_text, unsafe_allow_html=True)
+
+# Display heart icon connecting avatars
+heart_col = sl.columns([1, 5, 1])
+with heart_col[1]:
+    sl.markdown("<div class='center-text'><span class='heart-icon'>❤️</span></div>", unsafe_allow_html=True)
 
 time.sleep(0.5)
 sl.rerun()
